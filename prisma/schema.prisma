@@ -30,6 +30,6 @@ model Blogposts {
 }
 
 model Author {
-  id   String @id @default(uuid())
-  name String @db.VarBit(40)
+  id        String      @id @default(uuid())
+  name      String      @db.VarBit(40)
 }
