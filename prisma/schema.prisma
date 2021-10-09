@@ -76,3 +76,9 @@ model TagsToPosts {
   // createdAt
   createdAt   DateTime  @default(now()) @db.Timestamptz(3)
 }
+
+model users {
+  id   String @id @default(uuid())
+  role String @db.VarChar(15)
+  // 
+}
