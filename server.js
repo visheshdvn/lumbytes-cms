@@ -9,16 +9,16 @@ app.use(express.json({ extended: true }));
 app.use(cors());
 app.use(express.static(path.join(__dirname, "public")));
 // client
-const clientPath = path.join(__dirname, "client")
-app.use(express.static(clientPath));
+// const clientPath = path.join(__dirname, "client")
+// app.use(express.static(clientPath));
 
 // define routes
-app.get("/", (req, res, next) => {
-  // console.log(res);
-  // next();
-  // res.status(200).send("<h1>Hello!</h1>")
-  res.sendFile(path.join(clientPath, ".next", "server", "pages", "index.html"))
-});
+// app.get("/", (req, res, next) => {
+// console.log(res);
+// next();
+// res.status(200).send("<h1>Hello!</h1>")
+// res.sendFile(path.join(clientPath, ".next", "server", "pages", "index.html"))
+// });
 
 app.use("/api/blogposts", require("./routes/api/blogposts"));
 

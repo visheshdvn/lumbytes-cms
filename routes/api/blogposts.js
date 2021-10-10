@@ -3,8 +3,13 @@ const { PrismaClient } = require("@prisma/client");
 
 const { author, blogposts } = new PrismaClient();
 
-router.get("/", (req, res) => {
-  // blogposts.findMany()
+router.get("/", async (req, res) => {
+  const blog = await blogposts.findMany({
+    select: {
+      content: true,
+    },
+  });
+  console.log(blog);
   res.status("200").send("Hello");
 });
 
