@@ -1,9 +1,11 @@
 const router = require("express").Router();
+const { PrismaClient } = require("@prisma/client");
 
-// const router = express.Router()
+const { author, blogposts } = new PrismaClient();
 
 router.get("/", (req, res) => {
-    res.status("200").send("Hello")
-})
+  // blogposts.findMany()
+  res.status("200").send("Hello");
+});
 
-module.exports = router
+module.exports = router;
