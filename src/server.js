@@ -3,21 +3,18 @@ import express from "express";
 import path from "path";
 import cors from "cors";
 require("dotenv").config();
-import React from "react";
-import { renderToString } from "react-dom/server";
-// custom imports
-const Home = require("./components/Home").default;
+// custom components
+import renderer from "./helpers/renderer";
 
 const app = express();
 // init middleware
 app.use(express.json());
 app.use(cors());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static("public"));
 
 // define routes
 app.get("/", (req, res, next) => {
-  const content = renderToString(<Home />);
-  res.status(200).send(content);
+  res.status(200).send(renderer());
 });
 
 app.use("/api/blogposts", require("../routes/api/blogposts"));
