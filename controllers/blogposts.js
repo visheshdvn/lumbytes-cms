@@ -50,6 +50,7 @@ router.post("/create", createBlogpost, async (req, res) => {
     topPick,
     date,
   } = req.body;
+
   try {
     const blog = await blogposts.create({
       data: {
@@ -85,7 +86,8 @@ router.patch("/:postId", updateBlogpost, async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  // console.log(req.body);
+
+  console.log(req.body);
   const { postId } = req.params;
   const {
     title,
@@ -101,13 +103,42 @@ router.patch("/:postId", updateBlogpost, async (req, res) => {
     date,
   } = req.body;
 
-  const blogpost = await blogposts.findMany({
-    where: {
-      id: postId,
-    },
-  });
-  console.log(blogpost);
-  res.status(200).send("got here");
+  try {
+    const curr_blogpost = await blogposts.findUnique({
+      where: {
+        id: postId,
+      },
+    });
+    console.log(curr_blogpost);
+
+    const updated_post = await blogposts.update({
+      where: {
+        id: postId,
+      },
+      data: {
+        title: title === undefined ? curr_blogpost.title : title,
+        slug: slug === undefined ? curr_blogpost.slug : slug,
+        excerpt: excerpt === undefined ? curr_blogpost.excerpt : excerpt,
+        content: content === undefined ? curr_blogpost.content : content,
+        featured: featured === undefined ? curr_blogpost.featured : featured,
+        topPick: topPick === undefined ? curr_blogpost.topPick : topPick,
+        date: date === undefined ? curr_blogpost.date : date,
+        banner: banner === undefined ? curr_blogpost.banner : banner,
+        banneralt:
+          banneralt === undefined ? curr_blogpost.banneralt : banneralt,
+        metaDescription:
+          metaDescription === undefined
+            ? curr_blogpost.metaDescription
+            : metaDescription,
+        minuteRead:
+          minuteRead === undefined ? curr_blogpost.minuteRead : minuteRead,
+      },
+    });
+    res.status(200).json({ blogpost: updated_post, msg: "updated" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ blogpost: null, msg: "Server Error" });
+  }
 });
 
 export default router;

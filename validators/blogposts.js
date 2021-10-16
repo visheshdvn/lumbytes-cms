@@ -6,18 +6,18 @@ const { blogposts } = new PrismaClient();
 // DRY checks
 const commonInCreateAndUpdate = [
   check("metaDescription", "meta descrption should be a valid string")
-    .optional()
+    .optional({checkFalsy: true})
     .isString()
     .custom((value) => notEmpty(value)),
   check("metaDescription", "meta descrption should be under 201 characters")
-    .optional()
+    .optional({checkFalsy: true})
     .isLength({ max: 200 }),
   check("excerpt", "excerpt should be a valid string")
-    .optional()
+    .optional({checkFalsy: true})
     .isString()
     .custom((value) => notEmpty(value)),
   check("excerpt", "excerpt should be under 150 characters")
-    .optional()
+    .optional({checkFalsy: true})
     .isLength({ max: 150 }),
   check("minuteRead", "minute read should be an Integer")
     .optional()
