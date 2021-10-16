@@ -1,10 +1,11 @@
-// const express = require("express");
 import express from "express";
-import path from "path";
 import cors from "cors";
 require("dotenv").config();
 // custom components
 import renderer from "./helpers/renderer";
+// import routes
+import blogPostRoutes from "../controllers/blogposts";
+import tagRoutes from "../controllers/tags";
 
 const app = express();
 // init middleware
@@ -17,7 +18,8 @@ app.get("/", (req, res, next) => {
   res.status(200).send(renderer());
 });
 
-app.use("/api/blogposts", require("../routes/api/blogposts"));
+app.use("/api/blogposts", blogPostRoutes);
+app.use("/api/tags", tagRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ status: "404 - not found" });

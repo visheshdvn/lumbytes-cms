@@ -11,89 +11,83 @@ generator client {
 }
 
 model Author {
-  id        String      @id @default(uuid())
-  firstname String      @db.VarChar(50)
-  lastname  String      @db.VarChar(50)
-  username  String      @db.VarChar(20)
-  about     String?      @db.VarChar(200)
-  dp        String?
-  dpalt     String?
-  email     String?     @db.VarChar(50)
-  phone     String?     @db.VarChar(15)
-  facebook  String?     @db.VarChar(15)
-  twitter   String?     @db.VarChar(15)
-  linkedin  String?     @db.VarChar(15)
-  behance   String?     @db.VarChar(15)
-  github    String?     @db.VarChar(15)
-  instagram String?     @db.VarChar(15)
-  pintrest  String?     @db.VarChar(15)
-  a365px    String?     @db.VarChar(15)
+  id           String      @id @unique @default(uuid())
+  firstname    String      @db.VarChar(50)
+  lastname     String      @db.VarChar(50)
+  username     String      @unique @db.VarChar(20)
+  about        String?     @db.VarChar(200)
+  dp           String?
+  dpalt        String?
+  email        String?     @unique @db.VarChar(50)
+  phone        String?     @unique @db.VarChar(15)
+  facebook     String?     @db.VarChar(15)
+  twitter      String?     @db.VarChar(15)
+  linkedin     String?     @db.VarChar(15)
+  behance      String?     @db.VarChar(15)
+  github       String?     @db.VarChar(15)
+  instagram    String?     @db.VarChar(15)
+  pintrest     String?     @db.VarChar(15)
+  a365px       String?     @db.VarChar(15)
   // relations
-  Blogposts Blogposts[]
+  Blogposts    Blogposts[]
+  // required fields
+  created_at   DateTime    @default(now())
+  upadted_at   DateTime    @updatedAt
+  published_at DateTime?   @db.Timestamptz(3)
   // published
-  published Boolean     @default(false)
+  published    Boolean     @default(false)
 }
 
+// generate page - for each blogpost
 model Blogposts {
-  id              Int           @id @default(autoincrement())
-  title           String?       @db.VarChar(150)
-  slug            String?
+  id              String    @id @default(uuid())
+  title           String    @db.VarChar(150)
+  slug            String    @unique
   metaDescription String?
   excerpt         String?
-  content         String?
-  banner          String?       @db.VarChar(255)
-  banneralt       String?       @db.VarChar(255)
-  minuteRead      Int?          @default(1) @db.SmallInt
-  featured        Boolean?      @default(false)
-  topPick         Boolean?      @default(false)
-  date            DateTime?     @db.Timestamptz(0)
-  //
-  created_at      DateTime      @default(now())
-  published_at    DateTime      @db.Timestamptz(3)
-  upadted_at      DateTime      @updatedAt
+  content         String?   @unique
+  banner          String?   @db.VarChar(255)
+  banneralt       String?   @db.VarChar(255)
+  minuteRead      Int?      @default(1) @db.SmallInt
+  featured        Boolean?  @default(false)
+  topPick         Boolean?  @default(false)
+  date            DateTime? @db.Timestamptz(0)
   // relations
-  author          Author        @relation(fields: [authorId], references: [id])
-  authorId        String
-  TagsToPosts     TagsToPosts[]
-  topic           Topics        @relation(fields: [topicsId], references: [id])
-  topicsId        Int
+  author          Author?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  authorId        String?
+  topic           Topics?   @relation(fields: [topicsId], references: [id], onDelete: SetNull)
+  topicsId        Int?
+  tags            Tags[]
+  // required fields
+  created_at      DateTime  @default(now())
+  upadted_at      DateTime  @updatedAt
+  published_at    DateTime? @db.Timestamptz(3)
   // published
-  published       Boolean       @default(false)
+  published       Boolean   @default(false)
 }
 
 // Generate page for tags
 model Tags {
-  id              Int           @id @default(autoincrement())
-  tagname         String        @db.VarChar(40)
-  color           String?       @db.VarChar(25)
-  metaDescription String?       @db.VarChar(200)
-  ogimg           String?       @db.VarChar(250)
-  ogalt           String?       @db.VarChar(30)
+  id              Int         @id @unique @default(autoincrement())
+  tagname         String      @unique @db.VarChar(40)
+  color           String?     @db.VarChar(25)
+  metaDescription String?     @db.VarChar(200)
+  ogimg           String?     @db.VarChar(250)
+  ogalt           String?     @db.VarChar(30)
   // relations
-  TagsToPosts     TagsToPosts[]
+  blogposts       Blogposts[]
+  // required fields
+  created_at      DateTime    @default(now())
+  upadted_at      DateTime    @updatedAt
+  published_at    DateTime?   @db.Timestamptz(3)
   // published
-  published       Boolean       @default(false)
-}
-
-model TagsToPosts {
-  id          Int       @id @default(autoincrement())
-  blogposts   Blogposts @relation(fields: [blogpostsId], references: [id])
-  blogpostsId Int
-  tags        Tags      @relation(fields: [tagsId], references: [id])
-  tagsId      Int
-  // createdAt
-  createdAt   DateTime  @default(now()) @db.Timestamptz(3)
-}
-
-model testdb {
-  id   Int     @id @default(autoincrement())
-  data String?
+  published       Boolean     @default(false)
 }
 
 // generate page for topics
 model Topics {
   id              Int         @id @default(autoincrement())
-  topicname       String?     @db.VarChar(50)
+  topicname       String?     @unique @db.VarChar(50)
   metaDescription String?     @db.VarChar(200)
   ogimg           String?     @db.VarChar(250)
   ogalt           String?     @db.VarChar(30)
@@ -101,4 +95,9 @@ model Topics {
   Blogposts       Blogposts[]
   // published
   published       Boolean     @default(false)
+}
+
+model testdb {
+  id   Int    @id @default(autoincrement())
+  data String
 }
