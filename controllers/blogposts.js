@@ -20,7 +20,26 @@ router.get("/", async (req, res) => {
         published: false,
       },
     });
-    console.log(blog);
+    
+    res.status("200").json(blog);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "not found any" });
+  }
+});
+
+// @route   GET api/blogposts/:slug
+// @desc    find a blogpost from the slug
+// @access  Public
+router.get("/:slug", async (req, res) => {
+  const { slug } = req.params;
+  try {
+    const blog = await blogposts.findMany({
+      where: {
+        published: false,
+        slug,
+      },
+    });
     res.status("200").json(blog);
   } catch (err) {
     console.log(err);
@@ -87,8 +106,8 @@ router.patch("/:postId", updateBlogpost, async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  console.log(req.body);
   const { postId } = req.params;
+
   const {
     title,
     slug,
@@ -109,7 +128,6 @@ router.patch("/:postId", updateBlogpost, async (req, res) => {
         id: postId,
       },
     });
-    console.log(curr_blogpost);
 
     const updated_post = await blogposts.update({
       where: {

@@ -6,6 +6,8 @@ import renderer from "./helpers/renderer";
 // import routes
 import blogPostRoutes from "../controllers/blogposts";
 import tagRoutes from "../controllers/tags";
+// import custom middleawre
+import { trimBodyElements } from "../middleware/trimBody";
 
 const app = express();
 // init middleware
@@ -18,7 +20,7 @@ app.get("/", (req, res, next) => {
   res.status(200).send(renderer());
 });
 
-app.use("/api/blogposts", blogPostRoutes);
+app.use("/api/blogposts", trimBodyElements, blogPostRoutes);
 app.use("/api/tags", tagRoutes);
 
 app.use((req, res) => {
