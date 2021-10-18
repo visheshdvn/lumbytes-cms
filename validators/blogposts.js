@@ -60,14 +60,22 @@ export const createBlogpost = [
     .isString()
     .custom((slug) => notEmpty(slug))
     .custom((slug, { req }) => {
-      return blogposts.findMany({ where: { slug } }).then((blogpost) => {
-        if (blogpost.length > 0) {
-          console.log(req.params);
-          return Promise.reject("slug should be unique");
-        } else {
-          return Promise.resolve("slug valid");
-        }
-      });
+      return blogposts
+        .findMany({
+          where: {
+            slug,
+            id: {
+              not: req.params.postId,
+            },
+          },
+        })
+        .then((blogpost) => {
+          if (blogpost.length > 0) {
+            return Promise.reject("slug should be unique");
+          } else {
+            return Promise.resolve("slug valid");
+          }
+        });
     }),
   ...commonInCreateAndUpdate,
 ];
