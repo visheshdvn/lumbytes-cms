@@ -2,7 +2,7 @@ import { Router } from "express";
 import { PrismaClient } from "@prisma/client";
 import { validationResult } from "express-validator";
 // tags imports
-import { createTag } from "../validators/tags";
+import { createTag, updateTag } from "../validators/tags";
 
 const router = Router();
 const { tags } = new PrismaClient();
@@ -83,6 +83,33 @@ router.post("/create", createTag, async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({ status: "Error - not created" });
+  }
+});
+
+// @route   POST api/tags/:tagId
+// @desc    update a blogpost
+// @access  Public
+router.patch("/update/:tagId", updateTag, async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { tagId } = req.params;
+
+  try {
+    const tag = await tags.update({
+      where: {
+        id: +tagId,
+      },
+      data: {
+        ...req.body,
+      },
+    });
+    res.status(200).json({ tag, msg: "updated" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ tag: null, msg: "Server Error" });
   }
 });
 

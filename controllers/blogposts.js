@@ -105,7 +105,7 @@ router.post("/create", createBlogpost, async (req, res) => {
   }
 });
 
-// @route   POST api/blogposts/:postId
+// @route   POST api/blogposts/update/:postId
 // @desc    update a blogpost
 // @access  Public
 router.patch("/update/:postId", updateBlogpost, async (req, res) => {
@@ -130,7 +130,6 @@ router.patch("/update/:postId", updateBlogpost, async (req, res) => {
     date,
     authorId,
   } = req.body;
-  console.log(req.body);
 
   try {
     // const curr_blogpost = await blogposts.findUnique({
