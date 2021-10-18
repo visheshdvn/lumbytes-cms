@@ -6,26 +6,23 @@ const { blogposts } = new PrismaClient();
 // DRY checks
 const commonInCreateAndUpdate = [
   check("metaDescription", "meta descrption should be a valid string")
-    .optional({checkFalsy: true})
+    .optional({ checkFalsy: true })
     .isString()
-    .custom((value) => notEmpty(value)),
-  check("metaDescription", "meta descrption should be under 201 characters")
-    .optional({checkFalsy: true})
-    .isLength({ max: 200 }),
+    .custom((value) => notEmpty(value))
+    .isLength({ max: 200 })
+    .withMessage("meta descrption should be under 201 characters"),
   check("excerpt", "excerpt should be a valid string")
-    .optional({checkFalsy: true})
+    .optional({ checkFalsy: true })
     .isString()
-    .custom((value) => notEmpty(value)),
-  check("excerpt", "excerpt should be under 150 characters")
-    .optional({checkFalsy: true})
-    .isLength({ max: 150 }),
+    .custom((value) => notEmpty(value))
+    .isLength({ max: 150 })
+    .withMessage("excerpt should be under 150 characters"),
   check("minuteRead", "minute read should be an Integer")
     .optional()
     .not()
-    .isString(),
-  check("minuteRead", "minute read should be greater tham 0")
-    .optional()
-    .isInt({ min: 1 }),
+    .isString()
+    .isInt({ min: 1 })
+    .withMessage("minute read should be greater tham 0"),
   check("topPick", "topPick should be boolean")
     .optional()
     .not()
@@ -55,7 +52,7 @@ const notEmpty = (value) => {
 };
 
 // creating a blogpost
-const createBlogpost = [
+export const createBlogpost = [
   check("title", "title should be a non empty string")
     .isString()
     .custom((title) => notEmpty(title)),
@@ -75,7 +72,7 @@ const createBlogpost = [
 ];
 
 // update blogpost validation
-const updateBlogpost = [
+export const updateBlogpost = [
   check("title", "title should be a string")
     .optional()
     .isString()
@@ -96,4 +93,20 @@ const updateBlogpost = [
   ...commonInCreateAndUpdate,
 ];
 
-export { createBlogpost, updateBlogpost };
+const publishBlogpost = [
+  check("title", "title should be a non empty string")
+    .isString()
+    .custom((title) => notEmpty(title)),
+  check("slug", "slug should be a valid string")
+    .isString()
+    .custom((slug) => notEmpty(slug))
+    .custom((slug) => {
+      return blogposts.findMany({ where: { slug } }).then((blogpost) => {
+        if (blogpost.length > 0) {
+          return Promise.reject("slug should be unique");
+        } else {
+          return Promise.resolve("slug valid");
+        }
+      });
+    }),
+];
